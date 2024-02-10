@@ -1,0 +1,46 @@
+numeroConLetras :: Int -> String
+numeroConLetras n
+    | n `mod` 3 == 0 && n `mod` 5 == 0 = "FizzBuzz!"
+    | n `mod` 3 == 0                    = "Buzz!"
+    | n `mod` 5 == 0                    = "Fizz!"
+    | otherwise                         = numeroALetras n
+
+numeroALetras :: Int -> String
+numeroALetras n
+    | n == 0         = "Zero"
+    | n == 1         = "One"
+    | n == 2         = "Two"
+    | n == 3         = "Three"
+    | n == 4         = "Four"
+    | n == 5         = "Five"
+    | n == 6         = "Six"
+    | n == 7         = "Seven"
+    | n == 8         = "Eight"
+    | n == 9         = "Nine"
+    | n == 10        = "Ten"
+    | n == 11        = "Eleven"
+    | n == 12        = "Twelve"
+    | n == 13        = "Thirteen"
+    | n == 14        = "Fourteen"
+    | n == 15        = "Fifteen"
+    | n == 16        = "Sixteen"
+    | n == 17        = "Seventeen"
+    | n == 18        = "Eighteen"
+    | n == 19        = "Nineteen"
+    | n >= 20 && n < 30 = "Twenty " ++ numeroALetras (n `mod` 10)
+    | n >= 30 && n < 40 = "Thirty " ++ numeroALetras (n `mod` 10)
+    | n >= 40 && n < 50 = "Forty " ++ numeroALetras (n `mod` 10)
+    | n >= 50 && n < 60 = "Fifty " ++ numeroALetras (n `mod` 10)
+    | n >= 60 && n < 70 = "Sixty " ++ numeroALetras (n `mod` 10)
+    | n >= 70 && n < 80 = "Seventy " ++ numeroALetras (n `mod` 10)
+    | n >= 80 && n < 90 = "Eighty " ++ numeroALetras (n `mod` 10)
+    | n >= 90 && n < 100 = "Ninety " ++ numeroALetras (n `mod` 10)
+    | n `mod` 10 == 0 && n < 100 = ""
+    | otherwise      = error "Número fuera de rango"
+
+main :: IO ()
+main = do
+    putStrLn "Introduce un número entre 0 y 100:"
+    input <- getLine
+    let numero = read input :: Int
+    putStrLn $ numeroConLetras numero
