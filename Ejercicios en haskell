@@ -1,0 +1,66 @@
+-- 1) Descuento y IVA
+aplicarDescuento :: Float -> Float -> Float
+aplicarDescuento precio descuento = precio - (precio * descuento / 100)
+
+aplicarIVA :: Float -> Float -> Float
+aplicarIVA precio iva = precio + (precio * iva / 100)
+
+aplicarDescuentoIVA :: [(String, Float)] -> (Float -> Float -> Float) -> Float
+aplicarDescuentoIVA [] _ = 0
+aplicarDescuentoIVA ((_,precio):resto) funcion = funcion precio 10 + aplicarDescuentoIVA resto funcion
+
+-- 2) Aplicar una función a cada elemento de una lista
+aplicarFuncionLista :: (a -> b) -> [a] -> [b]
+aplicarFuncionLista _ [] = []
+aplicarFuncionLista f (x:xs) = f x : aplicarFuncionLista f xs
+
+-- 3) Contar palabras y su longitud en una frase
+contarPalabrasLongitud :: String -> [(String, Int)]
+contarPalabrasLongitud frase = map (\word -> (word, length word)) (words frase)
+
+-- 4) Convertir notas a calificaciones
+convertirNotas :: [(String, Float)] -> [(String, String)]
+convertirNotas = map (\(asignatura, nota) -> (map toUpper asignatura, calificar nota))
+  where
+    calificar nota
+      | nota >= 95 && nota <= 100 = "Excelente"
+      | nota >= 85 && nota <= 94  = "Notable"
+      | nota >= 75 && nota <= 84  = "Bueno"
+      | nota >= 70 && nota <= 74  = "Suficiente"
+      | otherwise                 = "Desempeño insuficiente"
+
+-- 5) Calcular el módulo de un vector
+moduloVector :: [Float] -> Float
+moduloVector = sqrt . sum . map (^2)
+
+-- 6) Encontrar valores atípicos en una muestra de números
+valoresAtipicos :: [Float] -> [Float]
+valoresAtipicos xs = filter (\x -> abs ((x - media) / desviacion) > 3) xs
+  where
+    n = fromIntegral $ length xs
+    media = sum xs / n
+    desviacion = sqrt (sum (map (\x -> (x - media) ^ 2) xs) / n)
+
+-- Ejemplos de uso
+main :: IO ()
+main = do
+    let cestaCompra = [("Leche", 1.2), ("Pan", 0.9), ("Queso", 2.5)]
+    putStrLn "Precio final con descuento:"
+    print $ aplicarDescuentoIVA cestaCompra aplicarDescuento
+    putStrLn "Precio final con IVA:"
+    print $ aplicarDescuentoIVA cestaCompra aplicarIVA
+
+    putStrLn "Aplicar función a cada elemento de una lista:"
+    print $ aplicarFuncionLista (*2) [1, 2, 3, 4, 5]
+
+    putStrLn "Contar palabras y su longitud en una frase:"
+    print $ contarPalabrasLongitud "Hola mundo Haskell"
+
+    putStrLn "Convertir notas a calificaciones:"
+    print $ convertirNotas [("Matemáticas", 78), ("Ciencias", 92), ("Historia", 65)]
+
+    putStrLn "Módulo de un vector:"
+    print $ moduloVector [3, 4]
+
+    putStrLn "Valores atípicos en una muestra de números:"
+    print $ valoresAtipicos [1, 2, 3, 4, 100, 200, -10, -20]
