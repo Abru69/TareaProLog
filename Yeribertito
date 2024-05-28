@@ -1,0 +1,38 @@
+% Hechos y relaciones principales
+trata_enfermedad(chile, resfriado).
+trata_enfermedad(chile, dolor_de_cabeza).
+trata_enfermedad(chichigua, dolor_de_estomago).
+trata_enfermedad(cilantro, digestivo).
+propiedad(chile, picante).
+propiedad(chichigua, calmante).
+propiedad(cilantro, digestivo).
+forma_empleo(chile, infusion).
+forma_empleo(chichigua, cataplasma).
+forma_empleo(cilantro, condimento).
+
+% Reglas para objetivo principal de la obra
+fortalece_organismo(Planta) :-
+    propiedad(Planta, fortalecedor).
+
+% Conocimiento de las plantas asignadas
+planta_asignada(chile).
+planta_asignada(chichigua).
+planta_asignada(cilantro).
+
+% Consulta para obtener conocimiento sobre las plantas asignadas
+obtener_conocimiento :-
+    planta_asignada(Planta),
+    trata_enfermedad(Planta, Enfermedad),
+    propiedad(Planta, Propiedad),
+    forma_empleo(Planta, Forma),
+    write('Planta: '), write(Planta), nl,
+    write('Trata enfermedad: '), write(Enfermedad), nl,
+    write('Propiedad medicinal: '), write(Propiedad), nl,
+    write('Forma de empleo: '), write(Forma), nl, nl,
+    fail. % Para encontrar todas las soluciones
+
+% Nuevos conocimientos
+% Podríamos añadir reglas adicionales basadas en el contenido del libro, como por ejemplo:
+% - Interacciones entre diferentes plantas y sus efectos combinados.
+% - Uso de plantas en diferentes culturas y regiones.
+% - Efectos secundarios o contraindicaciones de ciertas plantas.
