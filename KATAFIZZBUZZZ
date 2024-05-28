@@ -1,0 +1,46 @@
+import Data.List (inits, tails)
+
+-- Función para verificar si un número es primo
+isPrime :: Int -> Bool
+isPrime n
+    | n <= 1    = False
+    | n == 2    = True
+    | even n    = False
+    | otherwise = all (\x -> n `mod` x /= 0) [3, 5 .. floor (sqrt (fromIntegral n))]
+
+-- Función para convertir números a texto en español
+numeroATexto :: Int -> String
+numeroATexto n
+    | n == 0         = "cero"
+    | n < 0          = "menos " ++ numeroATexto (abs n)
+    | n <= 15        = unidades !! n
+    | n < 20         = "dieci" ++ unidades !! (n - 10)
+    | n == 20        = "veinte"
+    | n < 30         = "veinti" ++ unidades !! (n - 20)
+    | n < 100        = decenas !! (n `div` 10) ++ if n `mod` 10 /= 0 then " y " ++ unidades !! (n `mod` 10) else ""
+    | n < 200        = "ciento" ++ if n `mod` 100 /= 0 then " " ++ numeroATexto (n `mod` 100) else ""
+    | n < 1000       = unidades !! (n `div` 100) ++ "cientos" ++ if n `mod` 100 /= 0 then " " ++ numeroATexto (n `mod` 100) else ""
+    | n == 1000      = "mil"
+    | n < 2000       = "mil " ++ numeroATexto (n `mod` 1000)
+    | n < 1000000    = numeroATexto (n `div` 1000) ++ " mil" ++ if n `mod` 1000 /= 0 then " " ++ numeroATexto (n `mod` 1000) else ""
+    | n == 1000000   = "un millón"
+    | otherwise      = "Número fuera de rango"
+  where
+    unidades = ["", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once", "doce", "trece", "catorce", "quince"]
+    decenas  = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"]
+
+-- Función principal
+fizzBuzz :: Int -> String
+fizzBuzz n
+    | isPrime n = "FizzBuzz!"
+    | otherwise = numeroATexto n
+
+-- Ejemplo de uso
+main :: IO ()
+main = do
+    print $ fizzBuzz 178    -- "ciento setenta y ocho"
+    print $ fizzBuzz 3      -- "FizzBuzz!"
+    print $ fizzBuzz 21     -- "veintiuno"
+    print $ fizzBuzz 1000   -- "mil"
+    print $ fizzBuzz 1000000 -- "un millón"
+    print $ fizzBuzz 997 -- "FizzBuzz!"
