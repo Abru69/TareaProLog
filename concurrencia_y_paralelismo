@@ -1,0 +1,25 @@
+import Control.Concurrent.Async
+import Control.Monad (replicateM)
+import System.Random (randomRIO)
+
+-- Función para generar una lista de números aleatorios
+generateRandomList :: Int -> IO [Int]
+generateRandomList n = replicateM n (randomRIO (1, 1000))
+
+-- Función para calcular la suma de una lista de números
+sumList :: [Int] -> Int
+sumList = sum
+
+main :: IO ()
+main = do
+    -- Generamos dos listas de números aleatorios de tamaño 1,000,000
+    list1 <- generateRandomList 1000000
+    list2 <- generateRandomList 1000000
+    
+    -- Calculamos la suma de las listas de manera concurrente
+    (sum1, sum2) <- concurrently (return $ sumList list1) (return $ sumList list2)
+    
+    -- Imprimimos los resultados
+    putStrLn $ "La suma de la primera lista es: " ++ show sum1
+    putStrLn $ "La suma de la segunda lista es: " ++ show sum2
+    putStrLn $ "La suma total es: " ++ show (sum1 + sum2)
