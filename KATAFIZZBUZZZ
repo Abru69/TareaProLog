@@ -1,46 +1,89 @@
-import Data.List (inits, tails)
+-- Lista de palabras para los números del 0 al 15
+palabrasBasicas :: [String]
+palabrasBasicas = ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once", "doce", "trece", "catorce", "quince"]
 
--- Función para verificar si un número es primo
-isPrime :: Int -> Bool
-isPrime n
-    | n <= 1    = False
-    | n == 2    = True
-    | even n    = False
-    | otherwise = all (\x -> n `mod` x /= 0) [3, 5 .. floor (sqrt (fromIntegral n))]
+-- Función para determinar si un número es primo
+esPrimo :: Int -> Bool
+esPrimo n
+    | n <= 1 = False
+    | otherwise = all (\x -> n `mod` x /= 0) [2..limite]
+    where limite = floor (sqrt (fromIntegral n))
 
--- Función para convertir números a texto en español
-numeroATexto :: Int -> String
-numeroATexto n
-    | n == 0         = "cero"
-    | n < 0          = "menos " ++ numeroATexto (abs n)
-    | n <= 15        = unidades !! n
-    | n < 20         = "dieci" ++ unidades !! (n - 10)
-    | n == 20        = "veinte"
-    | n < 30         = "veinti" ++ unidades !! (n - 20)
-    | n < 100        = decenas !! (n `div` 10) ++ if n `mod` 10 /= 0 then " y " ++ unidades !! (n `mod` 10) else ""
-    | n < 200        = "ciento" ++ if n `mod` 100 /= 0 then " " ++ numeroATexto (n `mod` 100) else ""
-    | n < 1000       = unidades !! (n `div` 100) ++ "cientos" ++ if n `mod` 100 /= 0 then " " ++ numeroATexto (n `mod` 100) else ""
-    | n == 1000      = "mil"
-    | n < 2000       = "mil " ++ numeroATexto (n `mod` 1000)
-    | n < 1000000    = numeroATexto (n `div` 1000) ++ " mil" ++ if n `mod` 1000 /= 0 then " " ++ numeroATexto (n `mod` 1000) else ""
-    | n == 1000000   = "un millón"
-    | otherwise      = "Número fuera de rango"
-  where
-    unidades = ["", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once", "doce", "trece", "catorce", "quince"]
-    decenas  = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"]
+-- Función para convertir un número en palabras en español
+numeroEnPalabras :: Int -> String
+numeroEnPalabras n
+    | n >= 0 && n <= 15 = palabrasBasicas !! n
+    | n < 20 = "dieci" ++ numeroEnPalabras (n - 10)
+    | n < 30 = "veinti" ++ numeroEnPalabras (n - 20)
+    | n < 100 = decenas (n `div` 10) ++ " y " ++ numeroEnPalabras (n `mod` 10)
+    | n < 1000 = centenas (n `div` 100) ++ " " ++ numeroEnPalabras (n `mod` 100)
+    | n < 1000000 = miles (n `div` 1000) ++ " " ++ numeroEnPalabras (n `mod` 1000)
+    | n < 1000000000 = millones (n `div` 1000000) ++ " " ++ numeroEnPalabras (n `mod` 1000000)
+    | otherwise = "Número fuera de rango"
 
--- Función principal
-fizzBuzz :: Int -> String
-fizzBuzz n
-    | isPrime n = "FizzBuzz!"
-    | otherwise = numeroATexto n
+miles :: Int -> String
+miles n
+    | n == 1 = "mil"
+    | n `mod` 100 == 0 = numeroEnPalabras (n `div` 100) ++ " cien"
+    | otherwise = numeroEnPalabras (n `div` 100) ++ " ciento" ++ if (n `mod` 100) /= 0 then " " ++ numeroEnPalabras (n `mod` 100) else ""
 
--- Ejemplo de uso
+millones :: Int -> String
+millones n
+    | n == 1 = "un millón"
+    | otherwise = numeroEnPalabras n ++ " millones"
+
+-- Función auxiliar para convertir decenas en palabras
+decenas :: Int -> String
+decenas n
+    | n == 2 = "veinte"
+    | n == 3 = "treinta"
+    | n == 4 = "cuarenta"
+    | n == 5 = "cincuenta"
+    | n == 6 = "sesenta"
+    | n == 7 = "setenta"
+    | n == 8 = "ochenta"
+    | n == 9 = "noventa"
+    | otherwise = "Número fuera de rango"
+
+-- Función auxiliar para convertir centenas en palabras
+centenas :: Int -> String
+centenas n
+    | n == 1 = "ciento"
+    | n == 2 = "doscientos"
+    | n == 3 = "trescientos"
+    | n == 4 = "cuatrocientos"
+    | n == 5 = "quinientos"
+    | n == 6 = "seiscientos"
+    | n == 7 = "setecientos"
+    | n == 8 = "ochocientos"
+    | n == 9 = "novecientos"
+    | otherwise = "Número fuera de rango"
+
+-- Función principal que aplica las reglas de FizzBuzz o convierte el número en palabras según sea primo o no
+fizzBuzzPrimo :: Int -> String
+fizzBuzzPrimo n
+    | esPrimo n = "FizzBuzz!"
+    | otherwise = numeroEnPalabras n
+
+-- Pruebas automatizadas
+pruebas :: IO ()
+pruebas = do
+    putStrLn "Pruebas para números del Grupo 1:"
+    mapM_ (\n -> putStrLn $ fizzBuzzPrimo n) [0, 6, 12, 1, 7, 13, 2, 8, 14, 3, 9, 15, 4, 10, 20, 5, 11, 30]
+    putStrLn "Pruebas para números del Grupo 2:"
+    mapM_ (\n -> putStrLn $ fizzBuzzPrimo n) [16, 20, 26, 17, 21, 28, 18, 24, 29]
+    putStrLn "Pruebas para números del Grupo 3:"
+    mapM_ (\n -> putStrLn $ fizzBuzzPrimo n) [30, 50, 90, 31, 60, 100, 37, 70, 40, 80]
+    putStrLn "Pruebas para números del Grupo 4:"
+    mapM_ (\n -> putStrLn $ fizzBuzzPrimo n) [101, 167, 200, 525, 631, 249, 901]
+    putStrLn "Pruebas para números del Grupo 5:"
+    mapM_ (\n -> putStrLn $ fizzBuzzPrimo n) [1000, 1952, 7864, 435721]
+    putStrLn "Pruebas para números del Grupo 6:"
+    mapM_ (\n -> putStrLn $ fizzBuzzPrimo n) [1000000]
+
 main :: IO ()
 main = do
-    print $ fizzBuzz 178    -- "ciento setenta y ocho"
-    print $ fizzBuzz 3      -- "FizzBuzz!"
-    print $ fizzBuzz 21     -- "veintiuno"
-    print $ fizzBuzz 1000   -- "mil"
-    print $ fizzBuzz 1000000 -- "un millón"
-    print $ fizzBuzz 997 -- "FizzBuzz!"
+    putStrLn "Ingrese un número entre 0 y 1000000:"
+    entrada <- getLine
+    let numero = read entrada :: Int
+    putStrLn $ fizzBuzzPrimo numero
